@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+
+    int key[2][2] = {{9,4},{5,7}};
+    int invKey[2][2] = {{5,12},{11,25}};  // Precomputed inverse
+
+    char text[] = "MEETMEATTHEUSUALPLACEATTENRATHERTHANEIGHTOCLOCK";
+    int len = strlen(text);
+
+    printf("Encrypted Text:\n");
+
+    for(int i=0; i<len; i+=2) {
+
+        int a = text[i] - 'A';
+        int b = text[i+1] - 'A';
+
+        int c1 = (key[0][0]*a + key[0][1]*b) % 26;
+        int c2 = (key[1][0]*a + key[1][1]*b) % 26;
+
+        printf("%c%c", c1+'A', c2+'A');
+    }
+
+    printf("\n\nDecryption:\n");
+
+    char cipher[] = "UKIXUKGLQPZSPGHECNZGLQPGHCRNVCQGIKCF";
+    int clen = strlen(cipher);
+
+    for(int i=0; i<clen; i+=2) {
+
+        int a = cipher[i] - 'A';
+        int b = cipher[i+1] - 'A';
+
+        int p1 = (invKey[0][0]*a + invKey[0][1]*b) % 26;
+        int p2 = (invKey[1][0]*a + invKey[1][1]*b) % 26;
+
+        printf("%c%c", p1+'A', p2+'A');
+    }
+
+    return 0;
+}
