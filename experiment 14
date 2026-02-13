@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+
+    char plain[] = "SENDMOREMONEY";
+    int key[] = {9,0,1,7,23,15,21,14,11,11,2,8,9};
+    int len = strlen(plain);
+
+    char cipher[100];
+
+    printf("Encryption:\n");
+
+    for(int i=0;i<len;i++) {
+        int P = plain[i] - 'A';
+        int C = (P + key[i]) % 26;
+        cipher[i] = C + 'A';
+        printf("%c", cipher[i]);
+    }
+
+    printf("\n\nFinding New Key:\n");
+
+    char newPlain[] = "CASHNOTNEEDED";
+
+    for(int i=0;i<len;i++) {
+        int C = cipher[i] - 'A';
+        int P = newPlain[i] - 'A';
+        int newKey = (C - P + 26) % 26;
+        printf("%d ", newKey);
+    }
+
+    return 0;
+}
