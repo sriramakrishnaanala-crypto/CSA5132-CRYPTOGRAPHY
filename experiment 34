@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <string.h>
+
+#define BLOCK 8
+
+// Padding: 1 bit followed by zeros
+int pad(unsigned char *data, int len) {
+
+    int padLen = BLOCK - (len % BLOCK);
+    if(padLen == 0)
+        padLen = BLOCK;
+
+    data[len] = 0x80;  // 10000000
+
+    for(int i=1;i<padLen;i++)
+        data[len+i] = 0x00;
+
+    return len + padLen;
+}
+
+// Simple block cipher (XOR with key)
+void encryptBlock(unsigned char *in,
+                  unsigned char *out,
+                  unsigned char key) {
+    for(int i=0;i<BLOCK;i++)
+        out[i] = in[i] ^ key;
+}
+
+// ECB Mode
+void ECB(unsigned char *data,
+         unsigned char *cipher,
+         int len, unsigned char key) {
+
+    for(int i=0;i<len;i+=BLOCK)
+        encryptBlock(data+i, cipher+i, key);
+}
+
+// CBC Mode
+void CBC(unsigned char *data,
+         unsigned char *cipher,
+         int len,
+         unsigned char key,
+         unsigned char iv) {
+
+    unsigned char prev[BLOCK];
+
+    for(int i=0;i<BLOCK;i++)
+        prev[i] = iv;
+
+    for(int i=0;i<len;i+=BLOCK) {
+
+        unsigned char temp[BLOCK];
+
+        for(int j=0;j<BLOCK;j++)
+            temp[j] = data[i+j] ^ prev[j];
+
+        encryptBlock(temp, cipher+i, key);
+
+        for(int j=0;j<BLOCK;j++)
+            prev[j] = cipher[i+j];
+    }
+}
+
+// CFB Mode
+void CFB(unsigned char *data,
+         unsigned char *cipher,
+         int len,
+         unsigned char key,
+         unsigned char iv) {
+
+    unsigned char prev[BLOCK];
+
+    for(int i=0;i<BLOCK;i++)
+        prev[i] = iv;
+
+    for(int i=0;i<len;i+=BLOCK) {
+
+        unsigned char temp[BLOCK];
+
+        encryptBlock(prev, temp, key);
+
+        for(int j=0;j<BLOCK;j++)
+            cipher[i+j] = data[i+j] ^ temp[j];
+
+        for(int j=0;j<BLOCK;j++)
+            prev[j] = cipher[i+j];
+    }
+}
+
+int main() {
+
+    unsigned char data[100] = "HELLO WORLD";
+    unsigned char cipher[100];
+    int len = strlen((char*)data);
+
+    len = pad(data, len);
+
+    printf("Padded Length: %d\n", len);
+
+    ECB(data, cipher, len, 5);
+    printf("ECB Done\n");
+
+    CBC(data, cipher, len, 5, 0);
+    printf("CBC Done\n");
+
+    CFB(data, cipher, len, 5, 0);
+    printf("CFB Done\n");
+
+    return 0;
+}
