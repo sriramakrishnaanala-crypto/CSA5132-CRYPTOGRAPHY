@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <math.h>
+
+// Fast modular exponentiation
+long long modExp(long long base, long long exp, long long mod) {
+    long long result = 1;
+    while(exp > 0) {
+        if(exp % 2 == 1)
+            result = (result * base) % mod;
+        base = (base * base) % mod;
+        exp /= 2;
+    }
+    return result;
+}
+
+int main() {
+
+    long long e = 31;
+    long long n = 3599;
+
+    long long cipher;
+
+    printf("Enter ciphertext number: ");
+    scanf("%lld", &cipher);
+
+    printf("\nTrying all possible plaintexts...\n");
+
+    for(int p = 0; p < 26; p++) {
+        long long c = modExp(p, e, n);
+
+        if(c == cipher) {
+            printf("Match found! Plaintext = %c\n", p + 'A');
+            break;
+        }
+    }
+
+    return 0;
+}
