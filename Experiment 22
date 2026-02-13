@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <string.h>
+
+#define BLOCK 8
+
+// Simple permutation helper
+void permute(int *input, int *output, int *table, int n) {
+    for(int i=0;i<n;i++)
+        output[i] = input[table[i]-1];
+}
+
+// XOR
+void xor(int *a, int *b, int *out, int n) {
+    for(int i=0;i<n;i++)
+        out[i] = a[i] ^ b[i];
+}
+
+// Simple S-DES round function (simplified for demo)
+void simpleEncrypt(int *in, int *out) {
+    // For demonstration assume fixed transformation
+    for(int i=0;i<8;i++)
+        out[i] = in[i] ^ 1;  // NOT actual S-DES
+}
+
+void simpleDecrypt(int *in, int *out) {
+    for(int i=0;i<8;i++)
+        out[i] = in[i] ^ 1;
+}
+
+// CBC Encryption
+void CBC_encrypt(int p[][8], int c[][8], int iv[8], int blocks) {
+
+    int temp[8], prev[8];
+
+    for(int i=0;i<8;i++)
+        prev[i] = iv[i];
+
+    for(int b=0;b<blocks;b++) {
+
+        xor(p[b], prev, temp, 8);
+
+        simpleEncrypt(temp, c[b]);
+
+        for(int i=0;i<8;i++)
+            prev[i] = c[b][i];
+    }
+}
+
+// CBC Decryption
+void CBC_decrypt(int c[][8], int p[][8], int iv[8], int blocks) {
+
+    int temp[8], prev[8];
+
+    for(int i=0;i<8;i++)
+        prev[i] = iv[i];
+
+    for(int b=0;b<blocks;b++) {
+
+        simpleDecrypt(c[b], temp);
+
+        xor(temp, prev, p[b], 8);
+
+        for(int i=0;i<8;i++)
+            prev[i] = c[b][i];
+    }
+}
+
+int main() {
+
+    int IV[8] = {1,0,1,0,1,0,1,0};
+
+    int plaintext[2][8] = {
+        {0,0,0,0,0,0,0,1},
+        {0,0,1,0,0,0,1,1}
+    };
+
+    int ciphertext[2][8];
+    int decrypted[2][8];
+
+    CBC_en_
