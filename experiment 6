@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <ctype.h>
+
+// Function to find multiplicative inverse of a mod 26
+int modInverse(int a) {
+    for(int x = 1; x < 26; x++) {
+        if((a * x) % 26 == 1)
+            return x;
+    }
+    return -1;
+}
+
+int main() {
+    char text[200];
+    int a = 3, b = 15;
+    int a_inv = modInverse(a);
+
+    printf("Enter ciphertext: ");
+    scanf("%s", text);
+
+    printf("Decrypted text: ");
+
+    for(int i = 0; text[i] != '\0'; i++) {
+        if(isupper(text[i])) {
+            int C = text[i] - 'A';
+            int P = (a_inv * (C - b + 26)) % 26;
+            printf("%c", P + 'A');
+        }
+        else if(islower(text[i])) {
+            int C = text[i] - 'a';
+            int P = (a_inv * (C - b + 26)) % 26;
+            printf("%c", P + 'a');
+        }
+    }
+
+    return 0;
+}
