@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX 2000
+#define ALPHA 26
+
+// English letter frequency order
+char englishFreq[] = "ETAOINSHRDLCUMWFGYPBVKJXQZ";
+
+// Structure for storing results
+struct Candidate {
+    char text[MAX];
+    int score;
+};
+
+// Score function (simple English scoring)
+int scoreText(char text[]) {
+    int score = 0;
+    for(int i=0; text[i]; i++) {
+        char ch = toupper(text[i]);
+        if(strchr("ETAOIN", ch))
+            score++;
+    }
+    return score;
+}
+
+// Compare function for sorting
+int compare(const void *a, const void *b) {
+    return ((struct Candidate*)b)->score -
+           ((struct Candidate*)a)->score;
+}
+
+int main() {
+
+    char cipher[MAX];
+    int topN;
+
+    printf("Enter ciphertext:\n");
+    fgets(cipher, sizeof(cipher), stdin);
+
+    printf("Enter number of top results to display: ");
+    scanf("%d", &topN);
+
+    int freq[ALPHA] = {0};
+
+    // Count frequency of ciphertext letters
+    for(int i=0; cipher[i]; i++)
+        if(isalpha(cipher[i]))
+            freq[toupper(cipher[i]) - 'A']++;
+
+    // Sort ciphertext letters by frequency
+    char cipherOrder[ALPHA];
+    for(int i=0;i<ALPHA;i++)
+        cipherOrder[i] = 'A' + i;
+
+    for(int i=0;i<ALPHA-1;i++)
+        for(int j=i+1;j<ALPHA;j++)
+            if(freq[cipherOrder[j]-'A'] >
+               freq[cipherOrder[i]-'A']) {
+                char temp = cipherOrder[i];
+                cipherOrder[i] = cipherOrder[j];
+                cipherOrder[j] = temp;
+            }
+
+    struct Candidate results[10];
+
+    // Generate 10 candidate mappings
+    for(int k=0;k<10;k++) {
+
+        char mapping[ALPHA];
+
+        // Slight rotation to produce variations
+        for(int i=0;i<ALPHA;i++)
+            mapping[cipherOrder[i]-'A'] =
+                englishFreq[(i+k)%ALPHA];
+
+        // Generate plaintext
+        for(int i=0; cipher[i]; i++) {
+            if(isalpha(cipher[i])) {
+                char ch = toupper(cipher[i]);
+                results[k].text[i] =
+                    mapping[ch - 'A'];
+            } else {
+                results[k].text[i] = cipher[i];
+            }
+        }
+
+        results[k].text[strlen(cipher)] = '\0';
+        results[k].score = scoreText(results[k].text);
+    }
+
+    // Sort candidates
+    qsort(results, 10,
+          sizeof(struct Candidate), compare);
+
+    printf("\nTop Possible Plaintexts:\n");
+
+    for(int i=0;i<topN && i<10;i++) {
+        printf("\nRank %d (Score=%d):\n%s\n",
+               i+1,
+               results[i].score,
+               results[i].text);
+    }
+
+    return 0;
+}
