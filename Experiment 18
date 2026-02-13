@@ -1,0 +1,59 @@
+#include <stdio.h>
+
+#define HALF 28
+#define SUBKEY 48
+#define ROUNDS 16
+
+// Simplified PC-2 table showing
+// first 24 bits from C and next 24 from D
+int PC2[48] = {
+ 14,17,11,24,1,5,3,28,15,6,21,10,
+ 23,19,12,4,26,8,16,7,27,20,13,2,   // 24 from C
+
+ 41,52,31,37,47,55,30,40,51,45,33,48,
+ 44,49,39,56,34,53,46,42,50,36,29,32  // 24 from D
+};
+
+// Left circular shift
+void leftShift(int arr[], int shift) {
+    int temp[HALF];
+    for(int i=0;i<HALF;i++)
+        temp[i] = arr[(i+shift)%HALF];
+    for(int i=0;i<HALF;i++)
+        arr[i] = temp[i];
+}
+
+int main() {
+
+    int C[HALF], D[HALF];
+
+    // Example initialization
+    for(int i=0;i<HALF;i++) {
+        C[i] = i+1;         // 1 to 28
+        D[i] = i+29;        // 29 to 56
+    }
+
+    int shifts[16] =
+    {1,1,2,2,2,2,2,2,1,2,2,2,2,2,2,1};
+
+    printf("DES Subkey Generation:\n\n");
+
+    for(int r=0;r<ROUNDS;r++) {
+
+        leftShift(C, shifts[r]);
+        leftShift(D, shifts[r]);
+
+        printf("Round %d Subkey:\n", r+1);
+
+        for(int i=0;i<48;i++) {
+            if(PC2[i] <= 28)
+                printf("%d ", C[PC2[i]-1]);
+            else
+                printf("%d ", D[PC2[i]-29]);
+        }
+
+        printf("\n\n");
+    }
+
+    return 0;
+}
