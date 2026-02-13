@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int main() {
+    char text[100], key[27], result[100];
+    int i;
+
+    printf("Enter plaintext: ");
+    fgets(text, sizeof(text), stdin);
+
+    printf("Enter 26-letter substitution key (uppercase): ");
+    scanf("%s", key);
+
+    for(i = 0; text[i] != '\0'; i++) {
+        if(isupper(text[i])) {
+            result[i] = key[text[i] - 'A'];
+        }
+        else if(islower(text[i])) {
+            result[i] = tolower(key[text[i] - 'a']);
+        }
+        else {
+            result[i] = text[i];
+        }
+    }
+
+    result[i] = '\0';
+
+    printf("Encrypted text: %s", result);
+
+    return 0;
+}
