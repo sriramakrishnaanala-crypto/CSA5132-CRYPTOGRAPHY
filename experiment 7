@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <string.h>
+
+// Function to return decrypted character
+char decrypt(char ch) {
+    switch(ch) {
+        case '5': return 'A';
+        case '3': return 'G';
+        case '‡': return 'E';
+        case '†': return 'D';
+        case '0': return 'L';
+        case ')': return 'S';
+        case '6': return 'I';
+        case '*': return 'N';
+        case ';': return 'T';
+        case '4': return 'H';
+        case '8': return 'E';
+        case '2': return 'B';
+        case '¶': return 'R';
+        case ':': return 'O';
+        case '9': return 'F';
+        case '1': return 'M';
+        case ']': return 'P';
+        case '?': return 'U';
+        case '(': return 'W';
+        case '—': return 'Y';
+        default: return ' ';   // For spaces or unknown symbols
+    }
+}
+
+int main() {
+    char cipher[1000];
+    int i;
+
+    printf("Enter ciphertext:\n");
+    fgets(cipher, sizeof(cipher), stdin);
+
+    printf("\nDecrypted text:\n");
+
+    for(i = 0; cipher[i] != '\0'; i++) {
+        if(cipher[i] == '\n')
+            continue;
+        printf("%c", decrypt(cipher[i]));
+    }
+
+    return 0;
+}
