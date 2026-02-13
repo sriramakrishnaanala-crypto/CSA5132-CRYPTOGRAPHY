@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+#define TOTAL_LANES 25
+#define RATE_LANES 16
+#define CAPACITY_LANES 9
+
+int main() {
+
+    int state[TOTAL_LANES] = {0};
+
+    // Simulate message absorption
+    for(int i = 0; i < RATE_LANES; i++) {
+        state[i] = 1;  // each rate lane has nonzero bit
+    }
+
+    int capacity_nonzero = 0;
+
+    for(int i = RATE_LANES; i < TOTAL_LANES; i++) {
+        if(state[i] != 0)
+            capacity_nonzero++;
+    }
+
+    if(capacity_nonzero == 0)
+        printf("Capacity lanes remain zero forever.\n");
+    else
+        printf("Capacity lanes changed.\n");
+
+    return 0;
+}
