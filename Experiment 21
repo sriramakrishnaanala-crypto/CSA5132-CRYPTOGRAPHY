@@ -1,0 +1,14 @@
+#include <stdio.h>
+#include <string.h>
+
+#define BLOCK 8
+
+// Padding: 1 followed by zeros
+int pad(unsigned char *data, int len) {
+    int padLen = BLOCK - (len % BLOCK);
+    if(padLen == 0)
+        padLen = BLOCK;
+
+    data[len] = 0x80;  // 10000000
+    for(int i=1;i<padLen;i++)
+        data[len+i] = 0x
