@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+#define MAX 1000
+
+int main() {
+
+    char plaintext[MAX];
+    char ciphertext[MAX];
+    char decrypted[MAX];
+    int key[MAX];
+
+    printf("Enter plaintext (UPPERCASE): ");
+    scanf("%s", plaintext);
+
+    int len = strlen(plaintext);
+
+    srand(time(NULL));
+
+    printf("\nGenerated Key Stream:\n");
+
+    // Generate random key
+    for(int i = 0; i < len; i++) {
+        key[i] = rand() % 26;
+        printf("%d ", key[i]);
+    }
+
+    printf("\n");
+
+    // Encryption
+    for(int i = 0; i < len; i++) {
+        int P = plaintext[i] - 'A';
+        int C = (P + key[i]) % 26;
+        ciphertext[i] = C + 'A';
+    }
+    ciphertext[len] = '\0';
+
+    printf("\nCiphertext: %s\n", ciphertext);
+
+    // Decryption
+    for(int i = 0; i < len; i++) {
+        int C = ciphertext[i] - 'A';
+        int P = (C - key[i] + 26) % 26;
+        decrypted[i] = P + 'A';
+    }
+    decrypted[len] = '\0';
+
+    printf("Decrypted Text: %s\n", decrypted);
+
+    return 0;
+}
