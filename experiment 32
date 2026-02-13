@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <math.h>
+
+// Simplified DSA-like signature demo
+int DSA_sign(int hash, int x, int q) {
+    int k = rand() % q + 1;   // random k
+    int r = (k * 2) % q;      // simplified demo
+    int s = (hash + x*r) * k % q;
+    return r + s;             // combined output
+}
+
+// Simplified RSA-like signature demo
+int RSA_sign(int hash, int d, int n) {
+    return (int)pow(hash, d) % n;
+}
+
+int main() {
+
+    srand(time(NULL));
+
+    int message_hash = 10;
+
+    printf("DSA Signatures:\n");
+
+    int dsa1 = DSA_sign(message_hash, 5, 23);
+    int dsa2 = DSA_sign(message_hash, 5, 23);
+
+    printf("First signature:  %d\n", dsa1);
+    printf("Second signature: %d\n", dsa2);
+
+    printf("\nRSA Signatures:\n");
+
+    int rsa1 = RSA_sign(message_hash, 3, 33);
+    int rsa2 = RSA_sign(message_hash, 3, 33);
+
+    printf("First signature:  %d\n", rsa1);
+    printf("Second signature: %d\n", rsa2);
+
+    return 0;
+}
