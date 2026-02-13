@@ -1,0 +1,33 @@
+#include <stdio.h>
+
+// Function to compute GCD
+int gcd(int a, int b) {
+    while(b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+int main() {
+
+    int p = 59;
+    int q = 61;
+    int n = p * q;   // 3599
+
+    int plaintext = 59;   // shares factor with n
+
+    int g = gcd(plaintext, n);
+
+    printf("n = %d\n", n);
+    printf("Plaintext block = %d\n", plaintext);
+    printf("gcd(plaintext, n) = %d\n", g);
+
+    if(g > 1)
+        printf("Common factor found! RSA broken.\n");
+    else
+        printf("No common factor.\n");
+
+    return 0;
+}
