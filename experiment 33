@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdint.h>
+
+// Simple Feistel function (for demo)
+uint32_t F(uint32_t R, uint64_t K) {
+    return (R ^ (uint32_t)K);  // simplified F-function
+}
+
+// 16-round DES encryption
+uint64_t DES_encrypt(uint64_t plaintext, uint64_t key) {
+
+    uint32_t L = (plaintext >> 32) & 0xFFFFFFFF;
+    uint32_t R = plaintext & 0xFFFFFFFF;
+
+    for(int i = 0; i < 16; i++) {
+
+        uint32_t temp = R;
+        R = L ^ F(R, key);
+        L = temp;
+
+        // rotate key slightly each round (demo purpose)
+        key = (key << 1) | (key >> 55);
+    }
+
+    return ((uint64_t)R << 32) | L;
+}
+
+// 16-round DES decryption
+uint64_t DES_decrypt(uint64_t ciphertext, uint64_t key) {
+
+    uint32_t L = (ciphertext >> 32) & 0xFFFFFFFF;
+    uint32_t R = ciphertext & 0xFFFFFFFF;
+
+    for(int i = 15; i >= 0; i--) {
+
+        uint32_t temp = L;
+        L = R ^ F(L, key);
+        R = temp;
+
+        key = (key >> 1) | (key << 55);
+    }
+
+    return ((uint64_t)L << 32) | R;
+}
+
+int main() {
+
+    uint64_t plaintext = 0x1234567890ABCDEF;
+    uint64_t key = 0x133457799BBCDFF1;
+
+    uint64_t ciphertext = DES_encrypt(plaintext, key);
+    uint64_t decrypted = DES_decrypt(ciphertext, key);
+
+    printf("Plaintext : %llX\n", plaintext);
+    printf("Ciphertext: %llX\n", ciphertext);
+    printf("Decrypted : %llX\n", decrypted);
+
+    return 0;
+}
