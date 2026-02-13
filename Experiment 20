@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <string.h>
+
+#define BLOCK 8
+
+// Simple XOR encryption (demo only)
+void encryptECB(unsigned char *p, unsigned char *c, int len, char key) {
+    for(int i=0;i<len;i++)
+        c[i] = p[i] ^ key;
+}
+
+void decryptECB(unsigned char *c, unsigned char *p, int len, char key) {
+    for(int i=0;i<len;i++)
+        p[i] = c[i] ^ key;
+}
+
+void encryptCBC(unsigned char *p, unsigned char *c,
+                int len, char key, unsigned char iv) {
+
+    unsigned char prev = iv;
+
+    for(int i=0;i<len;i++) {
+        c[i] = (p[i] ^ prev) ^ key;
+        prev = c[i];
+    }
+}
+
+void decryptCBC(unsigned char *c, unsigned char *p,
+                int len, char key, unsigned char iv) {
+
+    unsigned char prev = iv;
+
+    for(int i=0;i<len;i++) {
+        p[i] = (c[i] ^ key) ^ prev;
+        prev = c[i];
+    }
+}
+
+int main() {
+
+    unsigned char plaintext[] = "ABCDEFGH";
+    unsigned char ciphertext[2]()
