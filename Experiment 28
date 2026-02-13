@@ -1,0 +1,33 @@
+#include <stdio.h>
+
+// Fast modular exponentiation
+long long modExp(long long base, long long exp, long long mod) {
+    long long result = 1;
+    while(exp > 0) {
+        if(exp % 2 == 1)
+            result = (result * base) % mod;
+        base = (base * base) % mod;
+        exp /= 2;
+    }
+    return result;
+}
+
+int main() {
+
+    long long q = 23;   // prime
+    long long a = 5;    // primitive root
+
+    long long x = 6;    // Alice secret
+    long long y = 15;   // Bob secret
+
+    long long A = modExp(a, x, q);
+    long long B = modExp(a, y, q);
+
+    long long keyAlice = modExp(B, x, q);
+    long long keyBob = modExp(A, y, q);
+
+    printf("Shared Key (Alice) = %lld\n", keyAlice);
+    printf("Shared Key (Bob)   = %lld\n", keyBob);
+
+    return 0;
+}
