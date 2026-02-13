@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+// Example values
+int main() {
+
+    int e = 31;
+    int d = 3031;
+    int n = 3599;
+
+    // Compute phi(n) from ed - 1
+    int k = e * d - 1;
+
+    printf("ed - 1 = %d\n", k);
+
+    // Since ed - 1 = k * phi(n)
+    // Try dividing by small integers to find phi(n)
+
+    for(int i=1; i<=k; i++) {
+        if(k % i == 0) {
+            int phi = k / i;
+
+            if(phi < n) {
+                printf("Possible phi(n) = %d\n", phi);
+            }
+        }
+    }
+
+    return 0;
+}
