@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX 1000
+
+// Score based on common English letters
+int scoreText(char text[]) {
+    int score = 0;
+    for(int i = 0; text[i] != '\0'; i++) {
+        char ch = toupper(text[i]);
+        if(ch=='E'||ch=='T'||ch=='A'||ch=='O'||ch=='I'||ch=='N')
+            score++;
+    }
+    return score;
+}
+
+// Decrypt using key
+void decrypt(char cipher[], int key, char result[]) {
+    for(int i=0; cipher[i] != '\0'; i++) {
+        if(isupper(cipher[i]))
+            result[i] = ((cipher[i]-'A'-key+26)%26)+'A';
+        else if(islower(cipher[i]))
+            result[i] = ((cipher[i]-'a'-key+26)%26)+'a';
+        else
+            result[i] = cipher[i];
+    }
+}
+
+// Structure to store result
+struct Candidate {
+    char text[MAX];
+    int key;
+    int score;
+};
+
+int main() {
+
+    char cipher[MAX];
+    int topN;
+
+    printf("Enter ciphertext: ");
+    fgets(cipher, sizeof(cipher), stdin);
+
+    printf("Enter number of top results to display: ");
+    scanf("%d", &topN);
+
+    struct Candidate results[26];
+
+    // Try all 26 keys
+    for(int k=0; k<26; k++) {
+        decrypt(cipher, k, results[k].text);
+        results[k].key = k;
+        results[k].score = scoreText(results[k].text);
+    }
+
+    // Sort by score (descending)
+    for(int i=0;i<25;i++)
+        for(int j=i+1;j<26;j++)
+            if(results[j].score > results[i].score) {
+                struct Candidate temp = results[i];
+                results[i] = results[j];
+                results[j] = temp;
+            }
+
+    // Print top N results
+    printf("\nTop Possible Plaintexts:\n");
+    for(int i=0; i<topN && i<26; i++) {
+        printf("\nKey = %d | Score = %d\n%s\n",
+               results[i].key,
+               results[i].score,
+               results[i].text);
+    }
+
+    return 0;
+}
