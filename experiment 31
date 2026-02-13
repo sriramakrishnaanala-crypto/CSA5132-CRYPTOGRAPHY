@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <string.h>
+
+#define BLOCK_SIZE 16  // 16 bytes = 128 bits
+
+void leftShift(unsigned char *in, unsigned char *out) {
+    unsigned char overflow = 0;
+
+    for(int i = BLOCK_SIZE - 1; i >= 0; i--) {
+        out[i] = (in[i] << 1) | overflow;
+        overflow = (in[i] & 0x80) ? 1 : 0;
+    }
+}
+
+void xorConstant(unsigned char *block, unsigned char constant) {
+    block[BLOCK_SIZE - 1] ^= constant;
+}
+
+int main() {
+
+    unsigned char L[BLOCK_SIZE] = {
+        0x7A,0x12,0x34,0x56,0x78,0x9A,0xBC,0xDE,
+        0xF0,0x11,0x22,0x33,0x44,0x55,0x66,0x77
+    };
+
+    unsigned char K1[BLOCK_SIZE];
+    unsigned char K2[BLOCK_SIZE];
+
+    unsigned char Rb = 0x87;  // for 128-bit block
+
+    // Generate K1
+    leftShift(L, K1);
+    if(L[0] & 0x80)
+        xorConstant(K1, Rb);
+
+    // Generate K2
+    leftShift(K1, K2);
+    if(K1[0] & 0x80)
+        xorConstant(K2, Rb);
+
+    printf("K1:\n");
+    for(int i=0;i<BLOCK_SIZE;i++)
+        printf("%02X ", K1[i]);
+
+    printf("\n\nK2:\n");
+    for(int i=0;i<BLOCK_SIZE;i++)
+        printf("%02X ", K2[i]);
+
+    return 0;
+}
