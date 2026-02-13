@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <string.h>
+
+#define ROUNDS 16
+#define KEY_SIZE 28
+
+// DES Shift Schedule
+int shifts[16] =
+{1,1,2,2,2,2,2,2,1,2,2,2,2,2,2,1};
+
+// Left circular shift
+void leftShift(int key[], int shift) {
+    int temp[KEY_SIZE];
+    for(int i=0;i<KEY_SIZE;i++)
+        temp[i] = key[(i+shift)%KEY_SIZE];
+    for(int i=0;i<KEY_SIZE;i++)
+        key[i] = temp[i];
+}
+
+int main() {
+
+    // Example 56-bit key split into C and D
+    int C[KEY_SIZE] = {1,0,_]()
